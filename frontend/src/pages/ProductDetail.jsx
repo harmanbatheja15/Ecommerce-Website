@@ -3,24 +3,23 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { IoIosArrowDown } from "react-icons/io";
 import { CiHeart, CiShare2 } from "react-icons/ci";
+import { API } from '../../config';
 
 const ProductDetailNew = () => {
 	const [productData, setProductData] = useState({});
 	const [cart, setCart] = useState([]);
+	const [wishlist, setWishlist] = useState([]);
 
 	const navigate = useNavigate();
 	const token = localStorage.getItem("token");
 	const { id } = useParams();
-
-	const DEV = false;
-	const url = !DEV || DEV === undefined || DEV === null ?  "https://ecommerce-website-harman.vercel.app" : "http://localhost:3000";
 
 	// Get Product
 	useEffect(() => {
 		const fetchProduct = async () => {
 			try {
 				const response = await axios.get(
-					`${url}/product/${id}`
+					`${API}/product/${id}`
 				);
 				const data = response.data;
 				setProductData(data.product[0]);
@@ -32,11 +31,11 @@ const ProductDetailNew = () => {
 		fetchProduct();
 	}, [id]);
 
-	// Get cart
+	// Get cart and wishlist
 	useEffect(() => {
 		const fetchCart = async () => {
 			try {
-				const response = await axios.get(`${url}/cart`, {
+				const response = await axios.get(`${API}/cart`, {
 					headers: {
 						Authorization: `Bearer ${token}`,
 					},
@@ -47,8 +46,23 @@ const ProductDetailNew = () => {
 				console.log(error);
 			}
 		};
+		
+		const fetchWishlist = async () => {
+			try {
+				const response = await axios.get(`${API}/wishlist`, {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				});
+				const data = response.data;
+				setWishlist(data.productsInWishlist);
+			} catch (error) {
+				console.log(error);
+			}
+		}
 
 		fetchCart();
+		fetchWishlist();
 	}, [token]);
 
 	const AddToCartBtn = () => {
@@ -60,7 +74,7 @@ const ProductDetailNew = () => {
 					e.preventDefault();
 					try {
 						await axios.put(
-							`${url}/cart/add/${productData._id}`,
+							`${API}/cart/add/${productData._id}`,
 							{
 								productId: productData._id,
 							},
@@ -90,7 +104,7 @@ const ProductDetailNew = () => {
 					e.preventDefault();
 					try {
 						await axios.put(
-							`${url}/cart/remove/${productData._id}`,
+							`${API}/cart/remove/${productData._id}`,
 							{
 								productId: productData._id,
 							},
@@ -110,6 +124,66 @@ const ProductDetailNew = () => {
 			</button>
 		);
 	};
+
+	const AddToWishlistBtn = () => {
+		return (
+			<button
+				type="button"
+				className="w-full rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green"
+				onClick={async (e) => {
+					e.preventDefault();
+					try {
+						await axios.put(
+							`${API}/wishlist/add/${productData._id}`,
+							{
+								productId: productData._id,
+							},
+							{
+								headers: {
+									Authorization: `Bearer ${token}`,
+								},
+							}
+						);
+						window.location.reload();
+					} catch (error) {
+						console.log("Error adding product to wishlist:", error);
+					}
+				}}
+			>
+				Add To Wishlist
+			</button>
+		);
+	}
+	
+	const RemoveFromWishlistBtn = () => {
+		return (
+			<button
+				type="button"
+				className="w-full rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red"
+				onClick={async (e) => {
+					e.preventDefault();
+					try {
+						await axios.put(
+							`${API}/wishlist/remove/${productData._id}`,
+							{
+								productId: productData._id,
+							},
+							{
+								headers: {
+									Authorization: `Bearer ${token}`,
+								},
+							}
+						);
+						window.location.reload();
+					} catch (error) {
+						console.log("Error removing product from wishlist:", error);
+					}
+				}}
+			>
+				Remove From Wishlist
+			</button>
+		);
+	}
 
 	return (
 		<>
@@ -168,7 +242,7 @@ const ProductDetailNew = () => {
 									)}
 
 									<div className="grid grid-cols-2 gap-2.5">
-										<button
+										{/* <button
 											type="button"
 											className="inline-flex items-center justify-center rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
 										>
@@ -179,7 +253,12 @@ const ProductDetailNew = () => {
 											<span className="block">
 												Wishlist
 											</span>
-										</button>
+										</button> */}
+										{!wishlist.some((item) => item._id === id) ? (
+											<AddToWishlistBtn />
+										) : (
+											<RemoveFromWishlistBtn />
+										)}
 										<div className="relative">
 											<button
 												type="button"

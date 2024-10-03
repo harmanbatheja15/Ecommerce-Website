@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { API } from '../../config';
 
 const Signup = () => {
 	const [name, setName] = useState("");
@@ -14,13 +15,10 @@ const Signup = () => {
 		myInputRef.current.focus();
 	}, []);
 
-	const DEV = false;
-	const url = !DEV || DEV === undefined || DEV === null ?  "https://ecommercewebsite-server.vercel.app" : "http://localhost:3000";
-
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		axios
-			.post(`${url}/signup`, {
+			.post(`${API}/signup`, {
 				name,
 				email,
 				password,

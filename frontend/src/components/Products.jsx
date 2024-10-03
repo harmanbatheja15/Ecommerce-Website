@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { API } from '../../config';
 
 const Products = () => {
 	const [products, setProducts] = useState([]);
@@ -8,12 +9,9 @@ const Products = () => {
 	const token = localStorage.getItem("token");
 	const navigate = useNavigate();
 
-	const DEV = false;
-	const url = !DEV || DEV === undefined || DEV === null ?  "https://ecommercewebsite-server.vercel.app" : "http://localhost:3000";
-
 	useEffect(() => {
 		axios
-			.get(`${url}/products`)
+			.get(`${API}/products`)
 			.then((response) => {
 				const data = response.data;
 				setProducts(data.products);

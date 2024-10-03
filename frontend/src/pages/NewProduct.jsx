@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { API } from '../../config';
 
 const NewProduct = () => {
 	const [title, setTitle] = useState("");
@@ -16,14 +17,11 @@ const NewProduct = () => {
 		myInputRef.current.focus();
 	}, []);
 
-	const DEV = false;
-	const url = !DEV || DEV === undefined || DEV === null ?  "https://ecommercewebsite-server.vercel.app" : "http://localhost:3000";
-
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		axios
 			.post(
-				`${url}/product/create`,
+				`${API}/product/create`,
 				{
 					title,
 					description,

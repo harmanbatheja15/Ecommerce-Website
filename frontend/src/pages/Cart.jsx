@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { API } from '../../config';
 
 const Cart = () => {
 	const [cart, setCart] = useState([]);
@@ -11,12 +12,9 @@ const Cart = () => {
 	const token = localStorage.getItem("token");
 	const navigate = useNavigate();
 
-	const DEV = false;
-	const url = !DEV || DEV === undefined || DEV === null ?  "https://ecommerce-website-harman.vercel.app" : "http://localhost:3000";
-
 	useEffect(() => {
 		axios
-			.get(`${url}/cart`, {
+			.get(`${API}/cart`, {
 				headers: {
 					Authorization: `Bearer ${token}`,
 				},
@@ -87,11 +85,11 @@ const Cart = () => {
 															<div className="mt-1 flex text-sm">
 																<p className="text-sm text-gray-500">
 																	{product.quantity ||
-																		"quantity: 2"}
+																		"quantity: 1"}
 																</p>
 																<p className="ml-4 border-l border-gray-200 pl-4 text-sm text-gray-500">
 																	{product.size ||
-																		"Size: 8 UK"}
+																		"Size: M"}
 																</p>
 															</div>
 															<div className="mt-1 flex items-end">
@@ -133,7 +131,7 @@ const Cart = () => {
 															try {
 																const response =
 																	await axios.put(
-																		`${url}/cart/remove/${product._id}`,
+																		`${API}/cart/remove/${product._id}`,
 																		{
 																			productId:
 																				product._id,
