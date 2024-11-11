@@ -56,7 +56,7 @@ const Products = () => {
 									{product.title}
 								</p>
 							</Link>
-							{userData?.admin && (
+							{userData?.admin ? (
 								<p className='flex items-center justify-between text-md mt-4 font-semibold leading-tight text-gray-900'>
 									<span>₹{product.price}</span>{' '}
 									<Link
@@ -65,6 +65,10 @@ const Products = () => {
 									>
 										Edit
 									</Link>
+								</p>
+							) : (
+								<p className='text-md mt-4 font-semibold leading-tight text-gray-900'>
+									<span>₹{product.price}</span>
 								</p>
 							)}
 						</div>
