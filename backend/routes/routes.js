@@ -1,8 +1,8 @@
-const express = require("express");
-const jwt = require("jsonwebtoken");
-const { JWT_SECRET } = require("../config");
-const userMiddleware = require("../middleware/user");
-const { Product, User } = require("../db");
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../config');
+const userMiddleware = require('../middleware/user');
+const { Product, User } = require('../db');
 
 const app = express();
 app.use(express.json());
@@ -10,7 +10,7 @@ app.use(express.json());
 const router = express.Router();
 
 // Home Route
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
 	const products = await Product.find();
 
 	return res.status(200).json({
@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
 });
 
 // Signup Route
-router.post("/signup", async (req, res) => {
+router.post('/signup', async (req, res) => {
 	const name = req.body.name;
 	const email = req.body.email;
 	const password = req.body.password;
@@ -32,7 +32,7 @@ router.post("/signup", async (req, res) => {
 });
 
 // Signin Route
-router.post("/signin", async (req, res) => {
+router.post('/signin', async (req, res) => {
 	const email = req.body.email;
 	const password = req.body.password;
 
@@ -45,6 +45,7 @@ router.post("/signin", async (req, res) => {
 		const token = jwt.sign(
 			{
 				email,
+				admin: user?.admin,
 			},
 			JWT_SECRET
 		);
@@ -54,17 +55,27 @@ router.post("/signin", async (req, res) => {
 		});
 	} else {
 		res.status(411).json({
-			message: "Invalid credentials!",
+			message: 'Invalid credentials!',
 		});
 	}
 });
 
 // Create Product Route
-router.post("/product/create", userMiddleware, async (req, res) => {
+router.post('/product/create', userMiddleware, async (req, res) => {
 	const title = req.body.title;
 	const description = req.body.description;
 	const price = req.body.price;
 	const imageUrl = req.body.imageUrl;
+
+	/* 	const user = await User.findOne({
+		email: req.email,
+	});
+
+	if (!user.admin) {
+		return res.status(401).json({
+			message: 'You are not authorized to perform this action!',
+		});
+	} */
 
 	await Product.create({ title, description, price, imageUrl });
 
@@ -74,7 +85,7 @@ router.post("/product/create", userMiddleware, async (req, res) => {
 });
 
 // Products Route
-router.get("/products", async (req, res) => {
+router.get('/products', async (req, res) => {
 	const products = await Product.find();
 
 	return res.status(200).json({
@@ -83,7 +94,7 @@ router.get("/products", async (req, res) => {
 });
 
 // Product Detail Route
-router.get("/product/:productId", async (req, res) => {
+router.get('/product/:productId', async (req, res) => {
 	const productId = req.params.productId;
 	const product = await Product.find({
 		_id: productId,
@@ -95,7 +106,7 @@ router.get("/product/:productId", async (req, res) => {
 });
 
 // Products in Wishlist Route
-router.get("/wishlist", userMiddleware, async (req, res) => {
+router.get('/wishlist', userMiddleware, async (req, res) => {
 	const user = await User.findOne({
 		email: req.email,
 	});
@@ -110,7 +121,7 @@ router.get("/wishlist", userMiddleware, async (req, res) => {
 });
 
 // Add Product to Wishlist Route
-router.put("/wishlist/add/:productId", userMiddleware, async (req, res) => {
+router.put('/wishlist/add/:productId', userMiddleware, async (req, res) => {
 	const productId = req.params.productId;
 	const email = req.email;
 
@@ -126,12 +137,12 @@ router.put("/wishlist/add/:productId", userMiddleware, async (req, res) => {
 	);
 
 	res.status(200).json({
-		message: "Product added to wishlist!",
+		message: 'Product added to wishlist!',
 	});
 });
 
 // Remove product from wishlist Route
-router.put("/wishlist/remove/:productId", userMiddleware, async (req, res) => {
+router.put('/wishlist/remove/:productId', userMiddleware, async (req, res) => {
 	const productId = req.params.productId;
 	const email = req.email;
 
@@ -147,12 +158,12 @@ router.put("/wishlist/remove/:productId", userMiddleware, async (req, res) => {
 	);
 
 	res.status(200).json({
-		message: "Product removed from wishlist!",
+		message: 'Product removed from wishlist!',
 	});
 });
 
 // Add Product to Cart Route
-router.put("/cart/add/:productId", userMiddleware, async (req, res) => {
+router.put('/cart/add/:productId', userMiddleware, async (req, res) => {
 	const productId = req.params.productId;
 	const email = req.email;
 
@@ -168,12 +179,12 @@ router.put("/cart/add/:productId", userMiddleware, async (req, res) => {
 	);
 
 	res.status(200).json({
-		message: "Product added to cart!",
+		message: 'Product added to cart!',
 	});
 });
 
 // Remove product from cart Route
-router.put("/cart/remove/:productId", userMiddleware, async (req, res) => {
+router.put('/cart/remove/:productId', userMiddleware, async (req, res) => {
 	const productId = req.params.productId;
 	const email = req.email;
 
@@ -189,12 +200,12 @@ router.put("/cart/remove/:productId", userMiddleware, async (req, res) => {
 	);
 
 	res.status(200).json({
-		message: "Product removed from cart!",
+		message: 'Product removed from cart!',
 	});
 });
 
 // Products in Cart Route
-router.get("/cart", userMiddleware, async (req, res) => {
+router.get('/cart', userMiddleware, async (req, res) => {
 	const user = await User.findOne({
 		email: req.email,
 	});
@@ -209,25 +220,59 @@ router.get("/cart", userMiddleware, async (req, res) => {
 });
 
 // Logout Route
-router.post("/logout", userMiddleware, (req, res) => {
-	const token = req.headers.authorization.split(" ")[1];
+router.post('/logout', userMiddleware, (req, res) => {
+	const token = req.headers.authorization.split(' ')[1];
 	const decodedToken = jwt.decode(token);
 
 	if (decodedToken) {
 		invalidatedTokens.add(decodedToken.jti);
 	}
 
-	res.status(200).json({ message: "Logout successful" });
+	res.status(200).json({ message: 'Logout successful' });
 });
 
 // Me Route
-router.get("/me", userMiddleware, async (req, res) => {
+router.get('/me', userMiddleware, async (req, res) => {
 	const user = await User.findOne({
 		email: req.email,
 	});
 
 	res.status(200).json({
 		user,
+	});
+});
+
+// edit product details
+router.put('/product/edit/:productId', userMiddleware, async (req, res) => {
+	const user = await User.findOne({
+		email: req.email,
+	});
+	const productId = req.params.productId;
+	const title = req.body.title;
+	const description = req.body.description;
+	const price = req.body.price;
+	const imageUrl = req.body.imageUrl;
+
+	if (!user.admin) {
+		return res.status(401).json({
+			message: 'You are not authorized to perform this action!',
+		});
+	}
+
+	await Product.updateOne(
+		{
+			_id: productId,
+		},
+		{
+			title,
+			description,
+			price,
+			imageUrl,
+		}
+	);
+
+	res.status(200).json({
+		message: 'Product updated successfully!',
 	});
 });
 

@@ -61,7 +61,12 @@ const Navbar = () => {
 				<div className='mx-auto max-w-7xl flex items-center justify-between px-4 py-2'>
 					<div className='inline-flex items-center space-x-2'>
 						<span className='font-bold'>
-							<Link to='/' onClick={() => setIsMobileMenuOpen(false)}>Ecommerce</Link>
+							<Link
+								to='/'
+								onClick={() => setIsMobileMenuOpen(false)}
+							>
+								Ecommerce
+							</Link>
 						</span>
 					</div>
 					<div className='hidden lg:block'>
@@ -181,7 +186,10 @@ const Navbar = () => {
 							</Link>
 						</li>
 						<li>
-							<Link to='/cart' onClick={() => setIsMobileMenuOpen(false)}>
+							<Link
+								to='/cart'
+								onClick={() => setIsMobileMenuOpen(false)}
+							>
 								<button
 									type='button'
 									className='rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black'
@@ -197,7 +205,9 @@ const Navbar = () => {
 										<Link
 											to='/addNewProduct'
 											className='text-sm font-semibold text-gray-800 hover:text-gray-900'
-											onClick={() => setIsMobileMenuOpen(false)}
+											onClick={() =>
+												setIsMobileMenuOpen(false)
+											}
 										>
 											Add Product
 										</Link>
@@ -218,7 +228,9 @@ const Navbar = () => {
 									<Link
 										to='/signup'
 										className='text-sm font-semibold text-gray-800 hover:text-gray-900'
-										onClick={() => setIsMobileMenuOpen(false)}
+										onClick={() =>
+											setIsMobileMenuOpen(false)
+										}
 									>
 										Signup
 									</Link>
@@ -227,7 +239,9 @@ const Navbar = () => {
 									<Link
 										to='/signin'
 										className='text-sm font-semibold text-gray-800 hover:text-gray-900'
-										onClick={() => setIsMobileMenuOpen(false)}
+										onClick={() =>
+											setIsMobileMenuOpen(false)
+										}
 									>
 										Signin
 									</Link>
